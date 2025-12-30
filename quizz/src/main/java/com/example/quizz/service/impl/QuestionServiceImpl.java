@@ -31,6 +31,12 @@ public class QuestionServiceImpl implements QuestionService {
     public QuestionResponseDTO createQuestion(QuestionRequestDTO requestDTO) {
         Question question = questionMapper.toEntity(requestDTO);
         question.setIsActive(true);
+        
+        // Set bidirectional relationship for answers
+        if (question.getAnswers() != null) {
+            question.getAnswers().forEach(answer -> answer.setQuestion(question));
+        }
+        
         Question savedQuestion = questionRepository.save(question);
         return questionMapper.toResponseDTO(savedQuestion);
     }
@@ -74,10 +80,11 @@ public class QuestionServiceImpl implements QuestionService {
 
         // Add new answers
         if (requestDTO.answers() != null) {
-            List<Answer> newAnswers = requestDTO.answers().stream()
-                    .map(answerDTO -> questionMapper.toAnswerEntity(answerDTO, existingQuestion))
-                    .collect(Collectors.toList());
-            newAnswers.forEach(existingQuestion::addAnswer);
+            List<Answer> newAnswers = questionMapper.toAnswerEntityList(requestDTO.answers());
+            newAnswers.forEach(answer -> {
+                answer.setQuestion(existingQuestion);
+                existingQuestion.addAnswer(answer);
+            });
         }
 
         Question updatedQuestion = questionRepository.save(existingQuestion);
