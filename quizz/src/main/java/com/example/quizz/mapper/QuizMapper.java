@@ -7,7 +7,6 @@ import com.example.quizz.entity.Quiz;
 import org.mapstruct.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface QuizMapper {
@@ -20,7 +19,7 @@ public interface QuizMapper {
 
     default List<QuizResponseDTO.QuestionSummaryDTO> mapQuestions(List<Question> questions) {
         if (questions == null) {
-            return null;
+            return List.of();
         }
         return questions.stream()
                 .map(q -> new QuizResponseDTO.QuestionSummaryDTO(
@@ -28,6 +27,6 @@ public interface QuizMapper {
                         q.getContent(),
                         q.getScore()
                 ))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

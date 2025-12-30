@@ -1,6 +1,5 @@
 package com.example.quizz.service.impl;
 
-import com.example.quizz.dto.request.AnswerRequestDTO;
 import com.example.quizz.dto.request.QuestionRequestDTO;
 import com.example.quizz.dto.response.QuestionResponseDTO;
 import com.example.quizz.entity.Answer;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
