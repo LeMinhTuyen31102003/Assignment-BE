@@ -1,5 +1,6 @@
 package com.example.quizz.config;
 
+import com.example.quizz.security.CustomAccessDeniedHandler;
 import com.example.quizz.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +35,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
     /**
      * BCrypt Password Encoder Bean
@@ -75,6 +77,9 @@ public class SecurityConfig {
                 )
                 .sessionManagement(session -> session
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // No session, use JWT
+                )
+                .exceptionHandling(exception -> exception
+                    .accessDeniedHandler(accessDeniedHandler)  // Custom 403 handler
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
