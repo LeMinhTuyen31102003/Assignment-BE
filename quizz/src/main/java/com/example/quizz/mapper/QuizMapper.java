@@ -9,21 +9,19 @@ import org.mapstruct.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface QuizMapper {
 
-    @Mapping(target = "questions", ignore = true)
     Quiz toEntity(QuizRequestDTO dto);
 
-    @Mapping(target = "totalQuestions", expression = "java(quiz.getQuestions().size())")
-    @Mapping(target = "questions", expression = "java(mapQuestions(quiz.getQuestions()))")
     QuizResponseDTO toResponseDTO(Quiz quiz);
 
-    @Mapping(target = "totalQuestions", expression = "java(quiz.getQuestions().size())")
-    @Mapping(target = "questions", ignore = true)
     QuizResponseDTO toResponseDTOWithoutQuestions(Quiz quiz);
 
     default List<QuizResponseDTO.QuestionSummaryDTO> mapQuestions(List<Question> questions) {
+        if (questions == null) {
+            return null;
+        }
         return questions.stream()
                 .map(q -> new QuizResponseDTO.QuestionSummaryDTO(
                         q.getId(),

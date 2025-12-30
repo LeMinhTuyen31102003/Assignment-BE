@@ -4,6 +4,7 @@ import com.example.quizz.dto.request.UserRequestDTO;
 import com.example.quizz.dto.response.UserResponseDTO;
 import com.example.quizz.entity.Role;
 import com.example.quizz.entity.User;
+import com.example.quizz.exception.DuplicateResourceException;
 import com.example.quizz.exception.ResourceNotFoundException;
 import com.example.quizz.mapper.UserMapper;
 import com.example.quizz.repository.RoleRepository;
@@ -30,7 +31,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserResponseDTO createUser(UserRequestDTO requestDTO) {
         if (userRepository.existsByEmail(requestDTO.email())) {
-            throw new IllegalArgumentException("Email already exists: " + requestDTO.email());
+            throw new DuplicateResourceException("Email already exists: " + requestDTO.email());
         }
 
         User user = userMapper.toEntity(requestDTO);
@@ -68,7 +69,7 @@ public class UserServiceImpl implements UserService {
         // Check if new email already exists (for different user)
         if (!user.getEmail().equals(requestDTO.email()) && 
             userRepository.existsByEmail(requestDTO.email())) {
-            throw new IllegalArgumentException("Email already exists: " + requestDTO.email());
+            throw new DuplicateResourceException("Email already exists: " + requestDTO.email());
         }
 
         user.setEmail(requestDTO.email());
